@@ -46,7 +46,7 @@ export default createStore({
             invoiceDate: doc.data().invoiceDate,
             paymentTerms: doc.data().paymentTerms,
             paymentDueDateUnix: doc.data().paymentDueDateUnix,
-            payentDueDate: doc.data().payentDueDate,
+            paymentDueDate: doc.data().paymentDueDate,
             productDescription: doc.data().productDescription,
             invoiceItemList: doc.data().invoiceItemList,
             invoiceTotal: doc.data().invoiceTotal,
