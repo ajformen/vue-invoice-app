@@ -34,6 +34,23 @@ export default createStore({
     DELETE_INVOICE(state, payload) {
       state.invoiceData = state.invoiceData.filter(invoice => invoice.docId != payload)
     },
+    UPDATE_STATUS_TO_PAID(state, payload) {
+      state.invoiceData.forEach(invoice => {
+        if (invoice.docId === payload) {
+          invoice.invoicePaid = true;
+          invoice.invoicePending = false;
+        }
+      })
+    },
+    UPDATE_STATUS_TO_PENDING(state, payload) {
+      state.invoiceData.forEach(invoice => {
+        if (invoice.docId === payload) {
+          invoice.invoicePaid = false;
+          invoice.invoicePending = true;
+          invoice.invoiceDraft = false;
+        }
+      })
+    },
   },
   actions: {
     async GET_INVOICES({ commit, state }) {
@@ -64,7 +81,7 @@ export default createStore({
             invoiceTotal: doc.data().invoiceTotal,
             invoicePending: doc.data().invoicePending,
             invoiceDraft: doc.data().invoiceDraft,
-            invoidePaid: doc.data().invoidePaid,
+            invoicePaid: doc.data().invoicePaid,
           }
           commit('SET_INVOICE_DATA', data);
         }
@@ -83,7 +100,26 @@ export default createStore({
       const getInvoice = db.collection('invoices').doc(docId);
       await getInvoice.delete();
       commit('DELETE_INVOICE', docId)
-    }
+    },
+
+    async UPDATE_STATUS_TO_PAID({ commit }, docId) {
+      const getInvoice = db.collection('invoices').doc(docId);
+      await getInvoice.update({
+        invoicePaid: true,
+        invoicePending: false,
+      });
+      commit('UPDATE_STATUS_TO_PAID', docId);
+    },
+
+    async UPDATE_STATUS_TO_PENDING({ commit }, docId) {
+      const getInvoice = db.collection('invoices').doc(docId);
+      await getInvoice.update({
+        invoicePaid: false,
+        invoicePending: true,
+        invoiceDraft: false,
+      });
+      commit('UPDATE_STATUS_TO_PENDING', docId);
+    },
   },
   modules: {
   }
